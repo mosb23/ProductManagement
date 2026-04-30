@@ -1,0 +1,41 @@
+@if (alertService.alert(); as alert) {
+  <div class="fixed right-6 top-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border bg-white p-4 shadow-xl">
+    <div class="flex items-start gap-3">
+      <div
+        class="mt-1 h-3 w-3 rounded-full"
+        [ngClass]="{
+          'bg-green-500': alert.type === 'success',
+          'bg-red-500': alert.type === 'error',
+          'bg-yellow-500': alert.type === 'warning',
+          'bg-blue-500': alert.type === 'info'
+        }"
+      ></div>
+
+      <div class="flex-1">
+        <p
+          class="text-sm font-semibold"
+          [ngClass]="{
+            'text-green-700': alert.type === 'success',
+            'text-red-700': alert.type === 'error',
+            'text-yellow-700': alert.type === 'warning',
+            'text-blue-700': alert.type === 'info'
+          }"
+        >
+          {{ alert.type | titlecase }}
+        </p>
+
+        <p class="mt-1 text-sm text-slate-600">
+          {{ alert.message }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="close()"
+        class="text-xl leading-none text-slate-400 hover:text-slate-700"
+      >
+        ×
+      </button>
+    </div>
+  </div>
+}

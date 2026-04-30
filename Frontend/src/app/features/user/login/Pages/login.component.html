@@ -1,0 +1,86 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10">
+  <main class="w-full max-w-md rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section class="p-6 sm:p-8">
+      <div class="mb-8">
+        <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Welcome Back</p>
+        <h2 class="mt-2 text-3xl font-bold text-slate-950">Sign in</h2>
+        <p class="mt-2 text-sm text-slate-500">Use your admin account to continue.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+        <div>
+          <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">
+            Email
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="admin@system.com"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          />
+
+          <p
+            *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('required')"
+            class="mt-2 text-sm text-red-600"
+          >
+            Email is required.
+          </p>
+
+          <p
+            *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('email')"
+            class="mt-2 text-sm text-red-600"
+          >
+            Enter a valid email.
+          </p>
+        </div>
+
+        <div>
+          <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          />
+
+          <p
+            *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('required')"
+            class="mt-2 text-sm text-red-600"
+          >
+            Password is required.
+          </p>
+
+          <p
+            *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('minlength')"
+            class="mt-2 text-sm text-red-600"
+          >
+            Password must be at least 8 characters.
+          </p>
+        </div>
+
+        <div
+          *ngIf="errorMessage"
+          class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+        >
+          {{ errorMessage }}
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ isLoading ? 'Signing in...' : 'Sign In' }}
+        </button>
+      </form>
+    </section>
+  </main>
+</div>
