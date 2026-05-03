@@ -24,9 +24,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         alertService.error(apiError.message);
         router.navigate(['/forbidden']);
       } else if (apiError.status === 500 || apiError.status === 0) {
-        alertService.error(apiError.message);
       }
-
+      
+      alertService.error(apiError.message);
       return throwError(() => apiError);
     })
   );

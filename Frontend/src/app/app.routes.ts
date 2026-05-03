@@ -8,14 +8,14 @@ export const routes: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () =>
-      import('./features/user/login/Pages/login.component')
+      import('./features/user/Pages/login/login.component')
         .then(c => c.LoginComponent)
   },
   {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/user/dashboard/Pages/dashboard.component')
+      import('./features/user/Pages/dashboard/dashboard.component')
         .then(c => c.DashboardComponent)
   },
   {

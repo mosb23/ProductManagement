@@ -8,13 +8,13 @@ export const USER_ROUTES: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () =>
-      import('./login/Pages/login.component').then(c => c.LoginComponent)
+      import('./Pages/login/login.component').then(c => c.LoginComponent)
   },
   {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./dashboard/Pages/dashboard.component').then(c => c.DashboardComponent)
+      import('./Pages/dashboard/dashboard.component').then(c => c.DashboardComponent)
   },
   {
     path: '',

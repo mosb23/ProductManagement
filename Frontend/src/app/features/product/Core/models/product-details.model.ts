@@ -4,7 +4,7 @@ export interface ProductDetails {
   description?: string | null;
   price: number;
   quantity: number;
-  status?: string;
+  status?: string | number;
   createdAt?: string;
   updatedAt?: string;
 }

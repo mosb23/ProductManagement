@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jmpekd+hxiI=",
+  "dgSpecHash": "ENAOgF+Y03A=",
   "success": true,
-  "projectFilePath": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
+  "projectFilePath": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mosb2\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\mosb2\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
@@ -71,9 +71,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'AutoMapper' 12.0.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
-      "projectPath": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
+      "projectPath": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
+      "filePath": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
       "libraryId": "AutoMapper",
       "targetGraphs": [
         "net10.0"

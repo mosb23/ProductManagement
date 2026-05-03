@@ -5,9 +5,10 @@ import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../models/api-response.model';
-import { LoginRequest } from '../../../features/user/login/Core/models/login-request.model';
-import { LoginResponse } from '../../../features/user/login/Core/models/login-response.model';
+
 import { AuthUser } from '../../models/auth-user.model';
+import { LoginRequest } from '../../../features/user/core/models/login-request.model';
+import { LoginResponse } from '../../../features/user/core/models/login-response.model';
 
 
 @Injectable({

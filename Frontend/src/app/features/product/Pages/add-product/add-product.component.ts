@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ApiError } from '../../../../core/models/api-error.model';
 import { AlertService } from '../../../../core/services/alert.service';
-import { ProductService } from '../Core/services/product.service';
+import { ProductService } from '../../Core/services/product.service';
 import { Location } from '@angular/common';
 
 

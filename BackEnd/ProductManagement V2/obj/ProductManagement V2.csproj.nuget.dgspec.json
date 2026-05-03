@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj": {}
+    "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj": {}
   },
   "projects": {
-    "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj": {
+    "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
+        "projectUniqueName": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
         "projectName": "ProductManagement V2",
-        "projectPath": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
+        "projectPath": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\ProductManagement V2.csproj",
         "packagesPath": "C:\\Users\\mosb2\\.nuget\\packages\\",
-        "outputPath": "D:\\DBS\\ProductManagement V2\\BackEnd\\ProductManagement V2\\obj\\",
+        "outputPath": "D:\\DBS\\ProductManagement\\BackEnd\\ProductManagement V2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

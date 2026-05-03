@@ -6,19 +6,19 @@ export const productRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./product-list/Pages/product-list.component')
+      import('./Pages/product-list/product-list.component')
         .then(c => c.ProductListComponent)
   },
   {
     path: 'create',
     loadComponent: () =>
-      import('./add-product/Pages/add-product.component')
+      import('./Pages/add-product/add-product.component')
         .then(c => c.AddProductComponent)
   },
   {
     path: ':id',
     loadComponent: () =>
-      import('./product-details/Pages/product-details.component')
+      import('./Pages/product-details/product-details.component')
         .then(c => c.ProductDetailsComponent)
   }
 ];

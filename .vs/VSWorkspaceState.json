@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\BackEnd",
+    "\\BackEnd\\ProductManagement V2",
+    "\\BackEnd\\ProductManagement V2\\Application",
+    "\\BackEnd\\ProductManagement V2\\Application\\Features",
+    "\\BackEnd\\ProductManagement V2\\Application\\Features\\Auth",
+    "\\BackEnd\\ProductManagement V2\\Application\\Features\\Auth\\Commands"
+  ],
+  "PreviewInSolutionExplorer": false
+}
