@@ -14,6 +14,7 @@ export class ConfirmDialogComponent {
   @Input() confirmText = 'Confirm';
   @Input() cancelText = 'Cancel';
   @Input() isLoading = false;
+  @Input() loadingText = 'Processing...';
 
   @Output() confirmed = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();

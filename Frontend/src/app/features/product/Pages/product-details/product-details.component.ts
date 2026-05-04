@@ -8,6 +8,10 @@ import { ProductService } from '../../Core/services/product.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AlertService } from '../../../../core/services/alert.service';
 import { ApiError } from '../../../../core/models/api-error.model';
+import { ProductStatus } from '../../Core/models/product-status.enum';
+import { productStatusOptions } from '../../Core/utils/product-status.util';
+import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
+import { ProductStatusHistory } from '../../Core/models/product-status-history.model';
 
 
 
@@ -15,7 +19,7 @@ import { ApiError } from '../../../../core/models/api-error.model';
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ProductStatusPipe],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss'
 })
@@ -26,11 +30,20 @@ export class ProductDetailsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly alertService = inject(AlertService);
 
+  readonly statusOptions = productStatusOptions;
+  readonly productStatus = ProductStatus;
+
   product: ProductDetails | null = null;
+  statusHistory: ProductStatusHistory[] = [];
+  selectedStatus: ProductStatus | null = null;
   isDeleteDialogOpen = false;
+  isStatusDialogOpen = false;
   isDeleting = false;
+  isUpdatingStatus = false;
+  isLoadingStatusHistory = false;
   isLoading = false;
   errorMessage = '';
+  historyErrorMessage = '';
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -59,9 +72,77 @@ export class ProductDetailsComponent implements OnInit {
           }
 
           this.product = response.data;
+          this.selectedStatus = response.data.status ?? null;
+          this.statusHistory = Array.isArray(response.data.history) ? response.data.history : [];
+          this.loadStatusHistory(response.data.id);
         },
-        error: () => {
-          this.errorMessage = 'Product not found or could not be loaded.';
+        error: (error: ApiError) => {
+          this.errorMessage = error.status === 404
+            ? 'Product not found.'
+            : 'Product not found or could not be loaded.';
+        }
+      });
+  }
+
+  onSelectedStatusChange(value: string): void {
+    const parsedStatus = Number(value);
+    this.selectedStatus = Number.isNaN(parsedStatus) ? null : parsedStatus as ProductStatus;
+  }
+
+  openStatusDialog(): void {
+    if (!this.product || this.selectedStatus === null || this.isUpdatingStatus) {
+      return;
+    }
+
+    if (this.selectedStatus === this.product.status) {
+      this.alertService.info('Status is unchanged. Select a different status to continue.');
+      return;
+    }
+
+    this.isStatusDialogOpen = true;
+  }
+
+  closeStatusDialog(): void {
+    if (this.isUpdatingStatus) {
+      return;
+    }
+
+    this.isStatusDialogOpen = false;
+  }
+
+  confirmStatusChange(): void {
+    if (!this.product || this.selectedStatus === null || this.selectedStatus === this.product.status) {
+      return;
+    }
+
+    this.isUpdatingStatus = true;
+
+    this.productService.updateProductStatus(this.product.id, this.selectedStatus)
+      .pipe(
+        finalize(() => this.isUpdatingStatus = false),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: response => {
+          if (!response.success) {
+            this.alertService.error(response.message || 'Failed to update product status.');
+            return;
+          }
+
+          this.product = { ...this.product!, status: this.selectedStatus };
+          this.isStatusDialogOpen = false;
+          this.alertService.success('Product status updated successfully.');
+          this.loadStatusHistory(this.product.id);
+        },
+        error: (error: ApiError) => {
+          if (error.status === 404) {
+            this.errorMessage = 'Product not found.';
+            this.alertService.error('Product not found.');
+            this.router.navigate(['/products']);
+            return;
+          }
+
+          this.alertService.error(error.message || 'Failed to update product status.');
         }
       });
   }
@@ -113,5 +194,41 @@ export class ProductDetailsComponent implements OnInit {
           this.alertService.error(error.message || 'Failed to delete product.');
         }
       });
+  }
+
+  private loadStatusHistory(productId: number): void {
+    this.isLoadingStatusHistory = true;
+    this.historyErrorMessage = '';
+
+    this.productService.getProductStatusHistories(productId)
+      .pipe(
+        finalize(() => this.isLoadingStatusHistory = false),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: response => {
+          if (!response.success) {
+            this.statusHistory = [];
+            this.historyErrorMessage = response.message || 'Failed to load status history.';
+            return;
+          }
+
+          this.statusHistory = response.data || [];
+        },
+        error: (error: ApiError) => {
+          this.statusHistory = [];
+          this.historyErrorMessage = error.message || 'Failed to load status history.';
+        }
+      });
+  }
+
+  toDisplayDate(value: string | null | undefined): string | null {
+    if (!value) {
+      return null;
+    }
+
+    // Backend dates can come without timezone info; treat them as UTC.
+    const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value);
+    return hasTimezone ? value : `${value}Z`;
   }
 }

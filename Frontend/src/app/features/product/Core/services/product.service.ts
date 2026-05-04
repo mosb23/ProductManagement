@@ -9,6 +9,8 @@ import { ApiResponse } from '../../../../core/models/api-response.model';
 import { PaginatedResult } from '../models/paginated-result.model';
 import { ProductDetails } from '../models/product-details.model';
 import { ProductListItem } from '../models/product-list-item.model';
+import { ProductStatus } from '../models/product-status.enum';
+import { ProductStatusHistory } from '../models/product-status-history.model';
 
 export interface ProductFilters {
   name?: string;
@@ -16,15 +18,6 @@ export interface ProductFilters {
   price?: number | null;
   quantity?: number | null;
 }
-
-const PRODUCT_STATUS_LABELS: Record<number, string> = {
-  0: 'Available',
-  1: 'Out of Stock',
-  2: 'Discontinued',
-  3: 'Pre Order',
-  4: 'Back Order',
-  5: 'Draft'
-};
 
 @Injectable({
   providedIn: 'root'
@@ -58,29 +51,11 @@ export class ProductService {
       params = params.set('quantity', filters.quantity);
     }
 
-    return this.http.get<ApiResponse<PaginatedResult<ProductListItem>>>(this.apiUrl, {
-      params
-    }).pipe(
-      map(response => ({
-        ...response,
-        data: response.data
-          ? {
-              ...response.data,
-              data: response.data.data.map(product => this.normalizeProductStatus(product))
-            }
-          : response.data
-      }))
-    );
+    return this.http.get<ApiResponse<PaginatedResult<ProductListItem>>>(this.apiUrl, { params });
   }
 
   getProductById(id: number): Observable<ApiResponse<ProductDetails>> {
-    return this.http.get<ApiResponse<ProductDetails>>(`${this.apiUrl}/${id}`)
-      .pipe(
-        map(response => ({
-          ...response,
-          data: response.data ? this.normalizeProductStatus(response.data) : response.data
-        }))
-      );
+    return this.http.get<ApiResponse<ProductDetails>>(`${this.apiUrl}/${id}`);
   }
 
   createProduct(request: CreateProductRequest): Observable<ApiResponse<unknown>> {
@@ -91,16 +66,20 @@ export class ProductService {
     return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`);
   }
 
-  private normalizeProductStatus<T extends ProductListItem | ProductDetails>(product: T): T {
-    const status = product.status;
+  updateProductStatus(id: number, status: ProductStatus): Observable<ApiResponse<unknown>> {
+    return this.http.patch<ApiResponse<unknown>>(`${this.apiUrl}/${id}/status`, { status });
+  }
 
-    if (typeof status !== 'number') {
-      return product;
-    }
-
-    return {
-      ...product,
-      status: PRODUCT_STATUS_LABELS[status] || 'N/A'
-    };
+  getProductStatusHistories(productId: number): Observable<ApiResponse<ProductStatusHistory[]>> {
+    return this.http.get<ApiResponse<PaginatedResult<ProductStatusHistory>>>(`${environment.apiBaseUrl}/product-status-histories`, {
+      params: new HttpParams().set('productId', productId)
+    }).pipe(
+      map(response => ({
+        ...response,
+        data: response.data?.data
+          ? [...response.data.data].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          : []
+      }))
+    );
   }
 }

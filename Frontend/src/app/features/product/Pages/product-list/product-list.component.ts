@@ -7,12 +7,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { ProductListItem } from '../../Core/models/product-list-item.model';
 import { ProductFilters, ProductService } from '../../Core/services/product.service';
+import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
 
 
 @Component({
   selector: 'app-product-list',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, PaginationComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PaginationComponent, ProductStatusPipe],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
