@@ -1,9 +1,6 @@
 import { ProductStatus } from './product-status.enum';
 
 export interface ProductStatusHistory {
-newStatus: any;
-createdAt: any;
-oldStatus: any;
   id: number;
   productId: number;
   oldStatus: ProductStatus | null;
