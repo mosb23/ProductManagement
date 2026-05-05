@@ -1,7 +1,14 @@
 .vs/
 **/.vs/
 bin/
-obj/
+.obj/
 node_modules/
 dist/
 .angular/
+*.cache/
+obj/
+.bin/
+/appsettings.json
+*.user
+*.suo
+*.log
