@@ -1,14 +1,22 @@
-.vs/
-**/.vs/
+# Build
 bin/
-.obj/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Node (if Angular exists)
 node_modules/
 dist/
 .angular/
+
+# Cache
 *.cache/
-obj/
-.bin/
-/appsettings.json
-*.user
-*.suo
-*.log
+
+# App settings (optional, depends on your setup)
+appsettings.Development.json
