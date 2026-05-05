@@ -12,29 +12,36 @@ export const routes: Routes = [
         .then(c => c.LoginComponent)
   },
   {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/user/Pages/dashboard/dashboard.component')
-        .then(c => c.DashboardComponent)
-  },
-  {
-    path: 'products',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./features/product/product.routes')
-        .then(r => r.productRoutes)
-  },
-  {
-    path: 'forbidden',
-    loadComponent: () =>
-      import('./shared/pages/forbidden/forbidden.component')
-        .then(c => c.ForbiddenComponent)
-  },
-  {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard'
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./shared/components/admin-layout/admin-layout.component')
+        .then(c => c.AdminLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/user/Pages/dashboard/dashboard.component')
+            .then(c => c.DashboardComponent)
+      },
+      {
+        path: 'products',
+        loadChildren: () =>
+          import('./features/product/product.routes')
+            .then(r => r.productRoutes)
+      },
+      {
+        path: 'forbidden',
+        loadComponent: () =>
+          import('./shared/pages/forbidden/forbidden.component')
+            .then(c => c.ForbiddenComponent)
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      }
+    ]
   },
   {
     path: '**',

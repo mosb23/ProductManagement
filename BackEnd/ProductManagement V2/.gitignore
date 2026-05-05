@@ -19,4 +19,4 @@ dist/
 *.cache/
 
 # App settings (optional, depends on your setup)
-appsettings.Development.json
+appsettings.json

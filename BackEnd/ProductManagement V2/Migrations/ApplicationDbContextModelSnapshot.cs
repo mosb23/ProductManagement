@@ -251,6 +251,9 @@ namespace ProductManagement_V2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -280,6 +283,9 @@ namespace ProductManagement_V2.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UpdatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -300,6 +306,9 @@ namespace ProductManagement_V2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NewStatus")
                         .HasColumnType("int");
 
@@ -313,6 +322,9 @@ namespace ProductManagement_V2.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedByUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, ViewChild, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,7 +11,8 @@ import { ApiError } from '../../../../core/models/api-error.model';
 import { ProductStatus } from '../../Core/models/product-status.enum';
 import { productStatusOptions } from '../../Core/utils/product-status.util';
 import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
-import { ProductStatusHistory } from '../../Core/models/product-status-history.model';
+import { ProductStatusHistoryComponent } from '../product-status-history/product-status-history.component';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 
 
@@ -19,7 +20,7 @@ import { ProductStatusHistory } from '../../Core/models/product-status-history.m
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ProductStatusPipe],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ProductStatusPipe, ProductStatusHistoryComponent],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss'
 })
@@ -29,21 +30,22 @@ export class ProductDetailsComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly alertService = inject(AlertService);
+  private readonly authService = inject(AuthService);
+
+  @ViewChild(ProductStatusHistoryComponent) private statusHistoryComponent?: ProductStatusHistoryComponent;
 
   readonly statusOptions = productStatusOptions;
   readonly productStatus = ProductStatus;
+  readonly canViewStatusHistory = computed(() => this.authService.hasClaim('product-status-histories:view'));
 
   product: ProductDetails | null = null;
-  statusHistory: ProductStatusHistory[] = [];
   selectedStatus: ProductStatus | null = null;
   isDeleteDialogOpen = false;
   isStatusDialogOpen = false;
   isDeleting = false;
   isUpdatingStatus = false;
-  isLoadingStatusHistory = false;
   isLoading = false;
   errorMessage = '';
-  historyErrorMessage = '';
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -73,8 +75,6 @@ export class ProductDetailsComponent implements OnInit {
 
           this.product = response.data;
           this.selectedStatus = response.data.status ?? null;
-          this.statusHistory = Array.isArray(response.data.history) ? response.data.history : [];
-          this.loadStatusHistory(response.data.id);
         },
         error: (error: ApiError) => {
           this.errorMessage = error.status === 404
@@ -132,7 +132,7 @@ export class ProductDetailsComponent implements OnInit {
           this.product = { ...this.product!, status: this.selectedStatus };
           this.isStatusDialogOpen = false;
           this.alertService.success('Product status updated successfully.');
-          this.loadStatusHistory(this.product.id);
+          this.statusHistoryComponent?.loadStatusHistory();
         },
         error: (error: ApiError) => {
           if (error.status === 404) {
@@ -192,32 +192,6 @@ export class ProductDetailsComponent implements OnInit {
           }
 
           this.alertService.error(error.message || 'Failed to delete product.');
-        }
-      });
-  }
-
-  private loadStatusHistory(productId: number): void {
-    this.isLoadingStatusHistory = true;
-    this.historyErrorMessage = '';
-
-    this.productService.getProductStatusHistories(productId)
-      .pipe(
-        finalize(() => this.isLoadingStatusHistory = false),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
-        next: response => {
-          if (!response.success) {
-            this.statusHistory = [];
-            this.historyErrorMessage = response.message || 'Failed to load status history.';
-            return;
-          }
-
-          this.statusHistory = response.data || [];
-        },
-        error: (error: ApiError) => {
-          this.statusHistory = [];
-          this.historyErrorMessage = error.message || 'Failed to load status history.';
         }
       });
   }

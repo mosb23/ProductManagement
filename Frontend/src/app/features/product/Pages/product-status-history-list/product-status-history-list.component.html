@@ -1,0 +1,253 @@
+<div class="mx-auto max-w-7xl space-y-6">
+  <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Audit</p>
+          <h1 class="mt-1 text-3xl font-bold text-slate-950">Product Status History</h1>
+          <p class="mt-2 max-w-2xl text-sm text-slate-500">
+            Review product status changes, when they happened, and who made each change.
+          </p>
+        </div>
+
+        <a
+          routerLink="/products"
+          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+        >
+          Back to Products
+        </a>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-3">
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Total Changes</p>
+          <p class="mt-1 text-2xl font-bold text-slate-950">{{ totalCount }}</p>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Current Page</p>
+          <p class="mt-1 text-2xl font-bold text-slate-950">{{ pageNumber }} / {{ totalPages }}</p>
+        </div>
+
+        <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Showing</p>
+          <p class="mt-1 text-2xl font-bold text-slate-950">{{ histories.length }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-slate-950">Filters</h2>
+            <p class="mt-1 text-sm text-slate-500">Narrow changes by product, transition, and date range.</p>
+          </div>
+
+          <button
+            type="button"
+            (click)="resetFilters()"
+            class="inline-flex min-h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Clear Filters
+          </button>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5" [formGroup]="filtersForm">
+          <label for="history-product-id-filter" class="sr-only">Product ID</label>
+          <input
+            id="history-product-id-filter"
+            type="number"
+            min="1"
+            formControlName="productId"
+            placeholder="Product ID"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          />
+
+          <label for="history-old-status-filter" class="sr-only">Old status</label>
+          <select
+            id="history-old-status-filter"
+            formControlName="oldStatus"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          >
+            <option [ngValue]="null">Old Status</option>
+            @for (option of statusOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+
+          <label for="history-new-status-filter" class="sr-only">New status</label>
+          <select
+            id="history-new-status-filter"
+            formControlName="newStatus"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          >
+            <option [ngValue]="null">New Status</option>
+            @for (option of statusOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+
+          <label for="history-from-date-filter" class="sr-only">From date</label>
+          <input
+            id="history-from-date-filter"
+            type="date"
+            formControlName="fromDate"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          />
+
+          <label for="history-to-date-filter" class="sr-only">To date</label>
+          <input
+            id="history-to-date-filter"
+            type="date"
+            formControlName="toDate"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      @if (isLoading) {
+        <div class="flex min-h-80 flex-col items-center justify-center gap-4 p-12">
+          <div class="h-11 w-11 animate-spin rounded-full border-4 border-slate-200 border-t-slate-950"></div>
+          <p class="text-sm font-medium text-slate-500">Loading status history...</p>
+        </div>
+      } @else if (errorMessage) {
+        <div class="flex min-h-80 flex-col items-center justify-center p-8 text-center">
+          <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-red-50 text-xl font-bold text-red-600">
+            !
+          </div>
+          <h2 class="mt-5 text-lg font-semibold text-slate-950">Could Not Load History</h2>
+          <p class="mt-2 max-w-md text-sm text-slate-500">{{ errorMessage }}</p>
+        </div>
+      } @else if (histories.length === 0) {
+        <div class="flex min-h-80 flex-col items-center justify-center p-8 text-center">
+          <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-slate-100 text-2xl font-bold text-slate-400">
+            0
+          </div>
+          <h2 class="mt-5 text-lg font-semibold text-slate-950">No status changes found</h2>
+          <p class="mt-2 max-w-md text-sm text-slate-500">Adjust the filters to broaden the audit results.</p>
+        </div>
+      } @else {
+        <div class="hidden overflow-x-auto md:block">
+          <table class="w-full min-w-[940px] border-collapse text-left">
+            <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th class="px-6 py-4">Product</th>
+                <th class="px-6 py-4">Old Status</th>
+                <th class="px-6 py-4">New Status</th>
+                <th class="px-6 py-4">Changed By</th>
+                <th class="px-6 py-4">Role</th>
+                <th class="px-6 py-4">Changed At</th>
+                <th class="px-6 py-4 text-right">Action</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-100">
+              @for (entry of histories; track entry.id) {
+                <tr class="transition hover:bg-slate-50">
+                  <td class="px-6 py-5">
+                    <p class="font-semibold text-slate-950">{{ entry.productName || 'Product #' + entry.productId }}</p>
+                    <p class="mt-1 text-sm text-slate-500">#{{ entry.productId }}</p>
+                  </td>
+
+                  <td class="px-6 py-5">
+                    <span
+                      class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+                      [ngClass]="entry.oldStatus | productStatus : 'badgeClass'"
+                    >
+                      {{ entry.oldStatus | productStatus }}
+                    </span>
+                  </td>
+
+                  <td class="px-6 py-5">
+                    <span
+                      class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+                      [ngClass]="entry.newStatus | productStatus : 'badgeClass'"
+                    >
+                      {{ entry.newStatus | productStatus }}
+                    </span>
+                  </td>
+
+                  <td class="px-6 py-5 text-sm font-medium text-slate-700">
+                    {{ entry.createdBy || 'Unknown' }}
+                  </td>
+
+                  <td class="px-6 py-5">
+                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      {{ entry.createdByRole || 'Unknown' }}
+                    </span>
+                  </td>
+
+                  <td class="px-6 py-5 text-sm text-slate-600">
+                    {{ toDisplayDate(entry.createdAt) ? (toDisplayDate(entry.createdAt) | date: 'medium') : 'N/A' }}
+                  </td>
+
+                  <td class="px-6 py-5 text-right">
+                    <a
+                      [routerLink]="['/products', entry.productId]"
+                      class="inline-flex min-h-9 items-center justify-center rounded-lg border border-slate-300 px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    >
+                      View Product
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="divide-y divide-slate-100 md:hidden">
+          @for (entry of histories; track entry.id) {
+            <article class="p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="truncate font-semibold text-slate-950">{{ entry.productName || 'Product #' + entry.productId }}</p>
+                  <p class="mt-1 text-sm text-slate-500">Changed by {{ entry.createdBy || 'Unknown' }}</p>
+                  <p class="mt-1 text-xs font-semibold text-slate-500">Role: {{ entry.createdByRole || 'Unknown' }}</p>
+                </div>
+
+                <span
+                  class="shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
+                  [ngClass]="entry.newStatus | productStatus : 'badgeClass'"
+                >
+                  {{ entry.newStatus | productStatus }}
+                </span>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div class="rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">From</p>
+                  <p class="mt-1 font-semibold text-slate-950">{{ entry.oldStatus | productStatus }}</p>
+                </div>
+
+                <div class="rounded-lg bg-slate-50 p-3">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Changed</p>
+                  <p class="mt-1 font-semibold text-slate-950">
+                    {{ toDisplayDate(entry.createdAt) ? (toDisplayDate(entry.createdAt) | date: 'mediumDate') : 'N/A' }}
+                  </p>
+                </div>
+              </div>
+
+              <a
+                [routerLink]="['/products', entry.productId]"
+                class="mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                View Product
+              </a>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <app-pagination
+        [pageNumber]="pageNumber"
+        [totalPages]="totalPages"
+        (pageChange)="onPageChange($event)"
+      />
+    </div>
+</div>

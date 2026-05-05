@@ -1,5 +1,5 @@
 @if (totalPages > 1) {
-  <nav class="flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
+  <nav class="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination">
     <button
       type="button"
       (click)="goToPage(pageNumber - 1)"
@@ -9,19 +9,21 @@
       Previous
     </button>
 
-    @for (page of pages; track page) {
-      <button
-        type="button"
-        (click)="goToPage(page)"
-        class="inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 px-3 text-sm font-semibold transition hover:bg-slate-50"
-        [class.bg-slate-950]="page === pageNumber"
-        [class.text-white]="page === pageNumber"
-        [class.border-slate-950]="page === pageNumber"
-        [attr.aria-current]="page === pageNumber ? 'page' : null"
-      >
-        {{ page }}
-      </button>
-    }
+    <div class="flex flex-wrap items-center justify-center gap-2">
+      @for (page of pages; track page) {
+        <button
+          type="button"
+          (click)="goToPage(page)"
+          class="inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 px-3 text-sm font-semibold transition hover:bg-slate-50"
+          [class.bg-slate-950]="page === pageNumber"
+          [class.text-white]="page === pageNumber"
+          [class.border-slate-950]="page === pageNumber"
+          [attr.aria-current]="page === pageNumber ? 'page' : null"
+        >
+          {{ page }}
+        </button>
+      }
+    </div>
 
     <button
       type="button"

@@ -1,79 +1,77 @@
-<div class="min-h-screen bg-slate-100">
-  <header class="border-b border-slate-200 bg-white">
-    <div class="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+<div class="mx-auto max-w-7xl space-y-6">
+  <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
       <div>
         <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Dashboard</p>
         <h1 class="mt-1 text-3xl font-bold text-slate-950">
           Welcome, {{ authService.currentUser()?.fullName }}
         </h1>
-        <p class="mt-2 max-w-2xl text-sm text-slate-500">
-          Start with inventory review, create a product, or confirm your current access level.
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          Start with product review, create a product, or audit recent status changes.
         </p>
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <a
           routerLink="/products"
-          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
           View Products
         </a>
         <a
           routerLink="/products/create"
-          class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
           Add Product
         </a>
-
-        <button
-          type="button"
-          (click)="logout()"
-          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 text-sm font-semibold text-red-700 transition hover:bg-red-100"
-        >
-          Logout
-        </button>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <section class="mb-6 grid gap-4 md:grid-cols-3">
-      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Role</p>
-        <h2 class="mt-2 text-2xl font-bold text-slate-950">
-          {{ authService.currentUser()?.role }}
-        </h2>
-      </div>
+  <section class="grid gap-4 md:grid-cols-3">
+    <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Role</p>
+      <h2 class="mt-2 text-2xl font-bold text-slate-950">
+        {{ authService.currentUser()?.role }}
+      </h2>
+    </div>
 
-      <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Claims</p>
-        <h2 class="mt-2 text-2xl font-bold text-slate-950">
-          {{ authService.currentUser()?.claims?.length || 0 }}
-        </h2>
-      </div>
+    <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Claims</p>
+      <h2 class="mt-2 text-2xl font-bold text-slate-950">
+        {{ authService.currentUser()?.claims?.length || 0 }}
+      </h2>
+    </div>
 
-      <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-        <p class="text-xs font-medium uppercase tracking-wide text-emerald-700">Session</p>
-        <h2 class="mt-2 text-2xl font-bold text-emerald-700">
-          Active
-        </h2>
-      </div>
-    </section>
+    <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+      <p class="text-xs font-medium uppercase tracking-wide text-emerald-700">Session</p>
+      <h2 class="mt-2 text-2xl font-bold text-emerald-700">Active</h2>
+    </div>
+  </section>
 
-    <section class="grid gap-4 lg:grid-cols-2">
-      <a routerLink="/products" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow">
-        <p class="text-sm font-semibold text-slate-950">Product Directory</p>
-        <p class="mt-2 text-sm leading-6 text-slate-500">
-          Search, inspect, and manage existing product records.
-        </p>
-      </a>
+  <section class="grid gap-4 lg:grid-cols-3">
+    <a routerLink="/products" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">P</div>
+      <p class="mt-4 text-sm font-semibold text-slate-950">Product Directory</p>
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        Search, inspect, and manage existing product records.
+      </p>
+    </a>
 
-      <a routerLink="/products/create" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow">
-        <p class="text-sm font-semibold text-slate-950">Create Product</p>
-        <p class="mt-2 text-sm leading-6 text-slate-500">
-          Add a new item with price, quantity, and product details.
-        </p>
-      </a>
-    </section>
-  </main>
+    <a routerLink="/products/create" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">+</div>
+      <p class="mt-4 text-sm font-semibold text-slate-950">Create Product</p>
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        Add a new item with price, quantity, and product details.
+      </p>
+    </a>
+
+    <a routerLink="/products/status-history" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">A</div>
+      <p class="mt-4 text-sm font-semibold text-slate-950">Status Audit</p>
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        Review status transitions with date, product, and changed-by filters.
+      </p>
+    </a>
+  </section>
 </div>

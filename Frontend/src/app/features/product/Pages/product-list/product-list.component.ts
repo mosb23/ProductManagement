@@ -8,6 +8,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { ProductListItem } from '../../Core/models/product-list-item.model';
 import { ProductFilters, ProductService } from '../../Core/services/product.service';
 import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 
 @Component({
@@ -21,6 +22,9 @@ export class ProductListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly productService = inject(ProductService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
+
+  readonly canViewStatusHistory = this.authService.hasClaim('product-status-histories:view');
 
   filtersForm = new FormGroup({
     name: new FormControl('', { nonNullable: true }),
@@ -93,6 +97,15 @@ export class ProductListComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.updateQueryParams(page, this.getCurrentFilters());
+  }
+
+  resetFilters(): void {
+    this.filtersForm.reset({
+      name: '',
+      description: '',
+      price: null,
+      quantity: null
+    });
   }
 
   trackByProductId(index: number, product: ProductListItem): number {

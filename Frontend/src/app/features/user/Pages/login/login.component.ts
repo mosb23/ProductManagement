@@ -22,6 +22,7 @@ export class LoginComponent {
 
   isLoading = false;
   errorMessage = '';
+  showPassword = false;
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -54,5 +55,9 @@ export class LoginComponent {
           this.errorMessage = error.message || 'Invalid email or password.';
         }
       });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

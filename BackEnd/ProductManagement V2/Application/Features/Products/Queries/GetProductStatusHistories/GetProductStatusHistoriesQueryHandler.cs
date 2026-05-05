@@ -1,10 +1,9 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProductManagement_V2.Application.Common;
 using ProductManagement_V2.Application.Common.Results;
 using ProductManagement_V2.Application.DTOs;
 using ProductManagement_V2.Domain.Enums;
-using ProductManagement_V2.Infrastructuree;
 
 namespace ProductManagement_V2.Application.Features.Products.Queries.GetProductStatusHistories
 {
@@ -45,21 +44,59 @@ namespace ProductManagement_V2.Application.Features.Products.Queries.GetProductS
 
             var totalCount = await historiesQuery.CountAsync(cancellationToken);
 
-            var data = await historiesQuery
+            var histories = await historiesQuery
                 .OrderByDescending(x => x.CreatedAt)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(x => new ProductStatusHistoryDto
+                .Select(x => new
                 {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
+                    x.Id,
+                    x.ProductId,
                     ProductName = x.Product != null ? x.Product.Name : null,
-                    OldStatus = (ProductStatus)x.OldStatus,
-                    NewStatus = (ProductStatus)x.NewStatus,
-                    CreatedAt = x.CreatedAt,
-                    CreatedBy = x.CreatedBy
+                    x.OldStatus,
+                    x.NewStatus,
+                    x.CreatedAt,
+                    x.CreatedBy,
+                    x.CreatedByUserId
                 })
                 .ToListAsync(cancellationToken);
+
+            var userIds = histories
+                .Where(x => !string.IsNullOrWhiteSpace(x.CreatedByUserId))
+                .Select(x => x.CreatedByUserId!)
+                .Distinct()
+                .ToList();
+
+            var users = await _context.UsersWithRoles
+                .Where(u => userIds.Contains(u.Id))
+                .Select(u => new
+                {
+                    u.Id,
+                    u.RoleName
+                })
+                .ToListAsync(cancellationToken);
+
+            var usersLookup = users
+                .GroupBy(u => u.Id)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.First().RoleName
+                );
+
+            var data = histories.Select(x => new ProductStatusHistoryDto
+            {
+                Id = x.Id,
+                ProductId = x.ProductId,
+                ProductName = x.ProductName,
+                OldStatus = (ProductStatus)x.OldStatus,
+                NewStatus = (ProductStatus)x.NewStatus,
+                CreatedAt = x.CreatedAt,
+                CreatedBy = x.CreatedBy,
+                CreatedByRole = x.CreatedByUserId != null &&
+                                usersLookup.TryGetValue(x.CreatedByUserId, out var roleName)
+                    ? roleName
+                    : null
+            }).ToList();
 
             var result = new PaginatedResult<ProductStatusHistoryDto>
             {

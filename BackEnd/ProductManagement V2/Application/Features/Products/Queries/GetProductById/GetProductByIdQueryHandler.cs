@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProductManagement_V2.Application.Common.Results;
 using ProductManagement_V2.Application.DTOs;
@@ -38,17 +38,32 @@ namespace ProductManagement_V2.Application.Features.Products.Queries.GetProductB
                     History = _context.ProductStatusHistories
                         .Where(h => h.ProductId == p.Id)
                         .OrderByDescending(h => h.CreatedAt)
+                        .GroupJoin(
+                            _context.UsersWithRoles,
+                            history => history.CreatedByUserId,
+                            user => user.Id,
+                            (history, users) => new { history, userById = users.FirstOrDefault() })
+                        .GroupJoin(
+                            _context.UsersWithRoles,
+                            x => x.history.CreatedBy,
+                            user => user.FullName,
+                            (x, users) => new
+                            {
+                                x.history,
+                                user = x.userById ?? users.FirstOrDefault()
+                            })
                         .Select(h => new ProductStatusHistoryDto
                         {
-                            Id = h.Id,
-                            ProductId = h.ProductId,
+                            Id = h.history.Id,
+                            ProductId = h.history.ProductId,
                             ProductName = p.Name,
 
-                            OldStatus = h.OldStatus,
-                            NewStatus = h.NewStatus,
+                            OldStatus = h.history.OldStatus,
+                            NewStatus = h.history.NewStatus,
 
-                            CreatedAt = h.CreatedAt,
-                            CreatedBy = h.CreatedBy
+                            CreatedAt = h.history.CreatedAt,
+                            CreatedBy = h.history.CreatedBy,
+                            CreatedByRole = h.user != null ? h.user.RoleName : null
                         })
                         .ToList()
                 })

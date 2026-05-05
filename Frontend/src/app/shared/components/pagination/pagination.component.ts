@@ -13,7 +13,12 @@ export class PaginationComponent {
   @Output() pageChange = new EventEmitter<number>();
 
   get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+    const visiblePages = 5;
+    const halfWindow = Math.floor(visiblePages / 2);
+    const start = Math.max(1, Math.min(this.pageNumber - halfWindow, this.totalPages - visiblePages + 1));
+    const end = Math.min(this.totalPages, start + visiblePages - 1);
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   }
 
   goToPage(page: number): void {

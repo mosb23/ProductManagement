@@ -57,7 +57,7 @@ export class AddProductComponent {
         }
 
         this.alertService.success('Product created successfully.');
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/products']);
       },
       error: (error: ApiError) => {
         this.alertService.error(error.message || 'Failed to create product.');
@@ -66,7 +66,7 @@ export class AddProductComponent {
   }
 
   goBack(): void {
-  this.location.back();
+    this.location.back();
   }
 
   get name() {

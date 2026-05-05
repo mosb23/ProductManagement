@@ -1,152 +1,151 @@
-<div class="min-h-screen bg-slate-100">
-  <header class="border-b border-slate-200 bg-white">
-    <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-      <button
-        type="button"
-        (click)="goBack()"
-        class="inline-flex w-fit items-center text-sm font-semibold text-slate-600 transition hover:text-slate-950"
-      >
-        Back
-      </button>
-
+<div class="mx-auto max-w-5xl space-y-6">
+  <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Inventory</p>
         <h1 class="mt-1 text-3xl font-bold text-slate-950">Add Product</h1>
-        <p class="mt-2 max-w-2xl text-sm text-slate-500">
-          Create a clean product record with the details needed for list and detail views.
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          Create a product record with the details required for listing, review, and status management.
         </p>
       </div>
+
+      <button
+        type="button"
+        (click)="goBack()"
+        class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      >
+        Cancel
+      </button>
     </div>
-  </header>
+  </section>
 
-  <main class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-    <form
-      [formGroup]="productForm"
-      (ngSubmit)="onSubmit()"
-      class="grid gap-6 lg:grid-cols-[1fr_280px]"
-    >
-      <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <div class="space-y-5">
+  <form
+    [formGroup]="productForm"
+    (ngSubmit)="onSubmit()"
+    class="grid gap-6 lg:grid-cols-[1fr_300px]"
+  >
+    <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="border-b border-slate-200 pb-4">
+        <h2 class="text-base font-semibold text-slate-950">Product Information</h2>
+        <p class="mt-1 text-sm text-slate-500">Use clear names and practical descriptions for easier search later.</p>
+      </div>
+
+      <div class="mt-5 space-y-5">
+        <div>
+          <label for="product-name" class="mb-2 block text-sm font-semibold text-slate-700">Product Name</label>
+          <input
+            id="product-name"
+            type="text"
+            formControlName="name"
+            class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+            [class.border-red-300]="name.touched && name.invalid"
+            [class.bg-red-50]="name.touched && name.invalid"
+            placeholder="Enter product name"
+          />
+
+          @if (name.touched && name.hasError('required')) {
+            <p class="mt-2 text-sm font-medium text-red-600">Name is required.</p>
+          }
+
+          @if (name.touched && name.hasError('minlength')) {
+            <p class="mt-2 text-sm font-medium text-red-600">Name must be at least 3 characters.</p>
+          }
+
+          @if (name.touched && name.hasError('maxlength')) {
+            <p class="mt-2 text-sm font-medium text-red-600">Name cannot exceed 200 characters.</p>
+          }
+        </div>
+
+        <div>
+          <label for="product-description" class="mb-2 block text-sm font-semibold text-slate-700">Description</label>
+          <textarea
+            id="product-description"
+            formControlName="description"
+            rows="5"
+            class="w-full resize-none rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+            [class.border-red-300]="description.touched && description.invalid"
+            [class.bg-red-50]="description.touched && description.invalid"
+            placeholder="Enter product description"
+          ></textarea>
+
+          @if (description.touched && description.hasError('maxlength')) {
+            <p class="mt-2 text-sm font-medium text-red-600">Description cannot exceed 1000 characters.</p>
+          }
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
           <div>
-            <label for="product-name" class="mb-2 block text-sm font-semibold text-slate-700">
-              Product Name
-            </label>
-
+            <label for="product-price" class="mb-2 block text-sm font-semibold text-slate-700">Price</label>
             <input
-              id="product-name"
-              type="text"
-              formControlName="name"
-              class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
-              placeholder="Enter product name"
+              id="product-price"
+              type="number"
+              formControlName="price"
+              min="0.01"
+              step="0.01"
+              class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+              [class.border-red-300]="price.touched && price.invalid"
+              [class.bg-red-50]="price.touched && price.invalid"
+              placeholder="0.00"
             />
 
-            @if (name.touched && name.hasError('required')) {
-              <p class="mt-2 text-sm text-red-600">Name is required.</p>
+            @if (price.touched && price.hasError('required')) {
+              <p class="mt-2 text-sm font-medium text-red-600">Price is required.</p>
             }
 
-            @if (name.touched && name.hasError('minlength')) {
-              <p class="mt-2 text-sm text-red-600">Name must be at least 3 characters.</p>
-            }
-
-            @if (name.touched && name.hasError('maxlength')) {
-              <p class="mt-2 text-sm text-red-600">Name cannot exceed 200 characters.</p>
+            @if (price.touched && price.hasError('min')) {
+              <p class="mt-2 text-sm font-medium text-red-600">Price must be more than 0.</p>
             }
           </div>
 
           <div>
-            <label for="product-description" class="mb-2 block text-sm font-semibold text-slate-700">
-              Description
-            </label>
+            <label for="product-quantity" class="mb-2 block text-sm font-semibold text-slate-700">Quantity</label>
+            <input
+              id="product-quantity"
+              type="number"
+              formControlName="quantity"
+              min="0"
+              step="1"
+              class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
+              [class.border-red-300]="quantity.touched && quantity.invalid"
+              [class.bg-red-50]="quantity.touched && quantity.invalid"
+              placeholder="0"
+            />
 
-            <textarea
-              id="product-description"
-              formControlName="description"
-              rows="5"
-              class="w-full resize-none rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
-              placeholder="Enter product description"
-            ></textarea>
+            @if (quantity.touched && quantity.hasError('required')) {
+              <p class="mt-2 text-sm font-medium text-red-600">Quantity is required.</p>
+            }
 
-            @if (description.touched && description.hasError('maxlength')) {
-              <p class="mt-2 text-sm text-red-600">Description cannot exceed 1000 characters.</p>
+            @if (quantity.touched && quantity.hasError('min')) {
+              <p class="mt-2 text-sm font-medium text-red-600">Quantity cannot be negative.</p>
             }
           </div>
-
-          <div class="grid gap-5 md:grid-cols-2">
-            <div>
-              <label for="product-price" class="mb-2 block text-sm font-semibold text-slate-700">
-                Price
-              </label>
-
-              <input
-                id="product-price"
-                type="number"
-                formControlName="price"
-                min="0.01"
-                step="0.01"
-                class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
-                placeholder="0.00"
-              />
-
-              @if (price.touched && price.hasError('required')) {
-                <p class="mt-2 text-sm text-red-600">Price is required.</p>
-              }
-
-              @if (price.touched && price.hasError('min')) {
-                <p class="mt-2 text-sm text-red-600">Price must be more than 0.</p>
-              }
-            </div>
-
-            <div>
-              <label for="product-quantity" class="mb-2 block text-sm font-semibold text-slate-700">
-                Quantity
-              </label>
-
-              <input
-                id="product-quantity"
-                type="number"
-                formControlName="quantity"
-                min="0"
-                step="1"
-                class="min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-slate-950 focus:bg-white focus:ring-2 focus:ring-slate-200"
-                placeholder="0"
-              />
-
-              @if (quantity.touched && quantity.hasError('required')) {
-                <p class="mt-2 text-sm text-red-600">Quantity is required.</p>
-              }
-
-              @if (quantity.touched && quantity.hasError('min')) {
-                <p class="mt-2 text-sm text-red-600">Quantity cannot be negative.</p>
-              }
-            </div>
-          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <aside class="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 class="text-base font-semibold text-slate-950">Create Record</h2>
-        <p class="mt-2 text-sm leading-6 text-slate-500">
-          Save the product when required fields are valid. You can return to the previous screen without creating it.
-        </p>
+    <aside class="h-fit rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="text-base font-semibold text-slate-950">Create Record</h2>
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        Save when the required fields are valid. After creation you will return to the product list.
+      </p>
 
-        <div class="mt-6 grid gap-3">
-          <button
-            type="submit"
-            [disabled]="isSaving"
-            class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {{ isSaving ? 'Saving...' : 'Create Product' }}
-          </button>
+      <div class="mt-6 grid gap-3">
+        <button
+          type="submit"
+          [disabled]="isSaving"
+          class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ isSaving ? 'Saving...' : 'Create Product' }}
+        </button>
 
-          <button
-            type="button"
-            (click)="goBack()"
-            class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-          >
-            Cancel
-          </button>
-        </div>
-      </aside>
-    </form>
-  </main>
+        <button
+          type="button"
+          (click)="goBack()"
+          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </aside>
+  </form>
 </div>

@@ -75,6 +75,10 @@ export class AuthService {
     return this.currentUser()?.token ?? null;
   }
 
+  hasClaim(claim: string): boolean {
+    return this.currentUser()?.claims?.includes(claim) ?? false;
+  }
+
   private loadUserFromStorage(): AuthUser | null {
     const storedUser = localStorage.getItem(this.storageKey);
 

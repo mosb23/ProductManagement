@@ -1,0 +1,95 @@
+<div class="min-h-screen bg-slate-100">
+  @if (isSidebarOpen) {
+    <button
+      type="button"
+      class="fixed inset-0 z-30 bg-slate-950/40 lg:hidden"
+      aria-label="Close navigation"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <aside
+    class="fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform duration-200 lg:translate-x-0"
+    [class.-translate-x-full]="!isSidebarOpen"
+    [class.translate-x-0]="isSidebarOpen"
+  >
+    <div class="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">
+        PM
+      </div>
+      <div class="min-w-0">
+        <p class="truncate text-sm font-bold text-slate-950">ProductManagement</p>
+        <p class="text-xs font-medium text-slate-500">Admin Workspace</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1 px-3 py-4">
+      @for (item of visibleNavigationItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="border-slate-950 bg-slate-950 text-white"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+          (click)="closeSidebar()"
+          class="flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="border-t border-slate-200 p-4">
+      <div class="rounded-lg bg-slate-50 p-3">
+        <p class="truncate text-sm font-semibold text-slate-950">
+          {{ authService.currentUser()?.fullName }}
+        </p>
+        <p class="mt-1 truncate text-xs text-slate-500">
+          {{ authService.currentUser()?.role }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="logout()"
+        class="mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 text-sm font-semibold text-red-700 transition hover:bg-red-100"
+      >
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <div class="lg:pl-72">
+    <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div class="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            (click)="toggleSidebar()"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 bg-white text-lg font-bold text-slate-700 transition hover:bg-slate-50 lg:hidden"
+            aria-label="Open navigation"
+          >
+            =
+          </button>
+
+          <div class="min-w-0">
+            <p class="truncate text-base font-bold text-slate-950">{{ pageTitle }}</p>
+            <p class="hidden text-xs text-slate-500 sm:block">Manage products, inventory, and status audit trails.</p>
+          </div>
+        </div>
+
+        <div class="hidden items-center gap-3 sm:flex">
+          <div class="text-right">
+            <p class="text-sm font-semibold text-slate-950">{{ authService.currentUser()?.fullName }}</p>
+            <p class="text-xs text-slate-500">{{ authService.currentUser()?.email }}</p>
+          </div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-600">
+            {{ authService.currentUser()?.fullName?.charAt(0) || 'U' }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="px-4 py-6 sm:px-6 lg:px-8">
+      <router-outlet />
+    </main>
+  </div>
+</div>

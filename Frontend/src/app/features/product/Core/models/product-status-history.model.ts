@@ -7,5 +7,6 @@ export interface ProductStatusHistory {
   newStatus: ProductStatus;
   createdAt: string;
   createdBy?: string | null;
+  createdByRole?: string | null;
   productName?: string | null;
 }

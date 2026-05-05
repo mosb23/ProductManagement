@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { authGuard } from '../../core/guards/auth.guard';
+import { claimGuard } from '../../core/guards/claim.guard';
 
 export const productRoutes: Routes = [
   {
@@ -14,6 +14,14 @@ export const productRoutes: Routes = [
     loadComponent: () =>
       import('./Pages/add-product/add-product.component')
         .then(c => c.AddProductComponent)
+  },
+  {
+    path: 'status-history',
+    canActivate: [claimGuard],
+    data: { claim: 'product-status-histories:view' },
+    loadComponent: () =>
+      import('./Pages/product-status-history-list/product-status-history-list.component')
+        .then(c => c.ProductStatusHistoryListComponent)
   },
   {
     path: ':id',

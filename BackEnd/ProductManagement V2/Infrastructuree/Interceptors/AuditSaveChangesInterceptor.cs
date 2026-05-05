@@ -1,14 +1,42 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ProductManagement_V2.Domain.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ProductManagement_V2.Infrastructuree.Interceptors
 {
     public class AuditSaveChangesInterceptor : SaveChangesInterceptor
     {
-        private string GetCurrentUser()
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuditSaveChangesInterceptor(IHttpContextAccessor httpContextAccessor)
         {
-            return "Admin";
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private sealed record CurrentUserAudit(string DisplayName, string? UserId);
+
+        private CurrentUserAudit GetCurrentUser()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            if (user?.Identity?.IsAuthenticated != true)
+            {
+                return new CurrentUserAudit("System", null);
+            }
+
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                ?? user.FindFirst("sub")?.Value;
+
+            var displayName = user.FindFirst("fullName")?.Value
+                ?? user.FindFirst(ClaimTypes.Name)?.Value
+                ?? user.FindFirst(ClaimTypes.Email)?.Value
+                ?? userId
+                ?? "System";
+
+            return new CurrentUserAudit(displayName, userId);
         }
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -39,12 +67,12 @@ namespace ProductManagement_V2.Infrastructuree.Interceptors
                 {
                     if (entry.State == EntityState.Added)
                     {
-                        auditable.SetCreated(now, currentUser);
+                        auditable.SetCreated(now, currentUser.DisplayName, currentUser.UserId);
                     }
 
                     if (entry.State == EntityState.Modified)
                     {
-                        auditable.SetUpdated(now, currentUser);
+                        auditable.SetUpdated(now, currentUser.DisplayName, currentUser.UserId);
                     }
 
                     if (entry.State == EntityState.Deleted && entry.Entity is SoftDeleteEntity softDelete)

@@ -1,0 +1,33 @@
+<div class="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-3">
+  <div class="flex items-center justify-between gap-3">
+    <h3 class="text-sm font-semibold text-slate-900">Status History</h3>
+    <span class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-500">
+      {{ statusHistory.length }}
+    </span>
+  </div>
+
+  @if (isLoading) {
+    <div class="mt-3 space-y-2">
+      <div class="h-12 animate-pulse rounded-md bg-white"></div>
+      <div class="h-12 animate-pulse rounded-md bg-white"></div>
+    </div>
+  } @else if (errorMessage) {
+    <p class="mt-2 text-sm text-red-600">{{ errorMessage }}</p>
+  } @else if (statusHistory.length === 0) {
+    <p class="mt-2 text-sm text-slate-500">No recent status changes.</p>
+  } @else {
+    <ul class="mt-2 space-y-2">
+      @for (entry of statusHistory; track entry.id) {
+        <li class="rounded-md border border-slate-100 bg-white p-2 text-xs text-slate-700">
+          <p>
+            <span class="font-semibold">{{ entry.newStatus | productStatus }}</span>
+            on {{ toDisplayDate(entry.createdAt) | date: 'medium' }}
+          </p>
+          <p class="mt-1 text-slate-500">
+            From {{ entry.oldStatus | productStatus }}
+          </p>
+        </li>
+      }
+    </ul>
+  }
+</div>
