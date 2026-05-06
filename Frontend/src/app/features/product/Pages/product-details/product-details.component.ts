@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, ViewChild, computed, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, computed, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -32,8 +32,6 @@ export class ProductDetailsComponent implements OnInit {
   private readonly alertService = inject(AlertService);
   private readonly authService = inject(AuthService);
 
-  @ViewChild(ProductStatusHistoryComponent) private statusHistoryComponent?: ProductStatusHistoryComponent;
-
   readonly statusOptions = productStatusOptions;
   readonly productStatus = ProductStatus;
   readonly canViewStatusHistory = computed(() => this.authService.hasClaim('product-status-histories:view'));
@@ -58,12 +56,18 @@ export class ProductDetailsComponent implements OnInit {
     this.loadProduct(id);
   }
 
-  private loadProduct(id: number): void {
-    this.isLoading = true;
+  private loadProduct(id: number, showLoading = true): void {
+    if (showLoading) {
+      this.isLoading = true;
+    }
 
     this.productService.getProductById(id)
       .pipe(
-        finalize(() => this.isLoading = false),
+        finalize(() => {
+          if (showLoading) {
+            this.isLoading = false;
+          }
+        }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
@@ -129,10 +133,10 @@ export class ProductDetailsComponent implements OnInit {
             return;
           }
 
-          this.product = { ...this.product!, status: this.selectedStatus };
+          const productId = this.product!.id;
           this.isStatusDialogOpen = false;
           this.alertService.success('Product status updated successfully.');
-          this.statusHistoryComponent?.loadStatusHistory();
+          this.loadProduct(productId, false);
         },
         error: (error: ApiError) => {
           if (error.status === 404) {

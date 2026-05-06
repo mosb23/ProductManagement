@@ -1,4 +1,4 @@
-﻿using ProductManagement_V2.Domain.Enums;
+using ProductManagement_V2.Domain.Enums;
 
 namespace ProductManagement_V2.Domain.Entities
 {
@@ -11,12 +11,22 @@ namespace ProductManagement_V2.Domain.Entities
 
         public Product? Product { get; private set; }
 
+        private ProductStatusHistory()
+        {
+        }
 
-        public ProductStatusHistory(int productId, ProductStatus oldStatus, ProductStatus newStatus)
+        public ProductStatusHistory(
+            int productId,
+            ProductStatus oldStatus,
+            ProductStatus newStatus,
+            string? createdByUserId,
+            string createdByName)
         {
             ProductId = productId;
             OldStatus = oldStatus;
             NewStatus = newStatus;
+
+            SetCreated(DateTime.UtcNow, createdByName, createdByUserId);
         }
 
     }

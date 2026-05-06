@@ -1,42 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using ProductManagement_V2.Application.Common.Auth;
 using ProductManagement_V2.Domain.Entities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace ProductManagement_V2.Infrastructuree.Interceptors
 {
     public class AuditSaveChangesInterceptor : SaveChangesInterceptor
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUserService _currentUserService;
 
-        public AuditSaveChangesInterceptor(IHttpContextAccessor httpContextAccessor)
+        public AuditSaveChangesInterceptor(ICurrentUserService currentUserService)
         {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        private sealed record CurrentUserAudit(string DisplayName, string? UserId);
-
-        private CurrentUserAudit GetCurrentUser()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-
-            if (user?.Identity?.IsAuthenticated != true)
-            {
-                return new CurrentUserAudit("System", null);
-            }
-
-            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                ?? user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-                ?? user.FindFirst("sub")?.Value;
-
-            var displayName = user.FindFirst("fullName")?.Value
-                ?? user.FindFirst(ClaimTypes.Name)?.Value
-                ?? user.FindFirst(ClaimTypes.Email)?.Value
-                ?? userId
-                ?? "System";
-
-            return new CurrentUserAudit(displayName, userId);
+            _currentUserService = currentUserService;
         }
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -59,20 +34,19 @@ namespace ProductManagement_V2.Infrastructuree.Interceptors
             if (context == null) return;
 
             var now = DateTime.UtcNow;
-            var currentUser = GetCurrentUser();
 
             foreach (var entry in context.ChangeTracker.Entries())
             {
                 if (entry.Entity is AuditableEntity auditable)
                 {
-                    if (entry.State == EntityState.Added)
+                    if (entry.State == EntityState.Added && !HasExplicitCreatedAudit(auditable))
                     {
-                        auditable.SetCreated(now, currentUser.DisplayName, currentUser.UserId);
+                        auditable.SetCreated(now, _currentUserService.DisplayName, _currentUserService.UserId);
                     }
 
                     if (entry.State == EntityState.Modified)
                     {
-                        auditable.SetUpdated(now, currentUser.DisplayName, currentUser.UserId);
+                        auditable.SetUpdated(now, _currentUserService.DisplayName, _currentUserService.UserId);
                     }
 
                     if (entry.State == EntityState.Deleted && entry.Entity is SoftDeleteEntity softDelete)
@@ -82,6 +56,12 @@ namespace ProductManagement_V2.Infrastructuree.Interceptors
                     }
                 }
             }
+        }
+
+        private static bool HasExplicitCreatedAudit(AuditableEntity auditable)
+        {
+            return !string.IsNullOrWhiteSpace(auditable.CreatedByUserId)
+                || auditable.CreatedBy != "System";
         }
     }
 }

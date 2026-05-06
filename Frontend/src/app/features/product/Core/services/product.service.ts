@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { CreateProductRequest } from '../models/create-product-request.model';
 import { environment } from '../../../../../environments/environment';
@@ -110,19 +109,4 @@ export class ProductService {
     return this.http.get<ApiResponse<PaginatedResult<ProductStatusHistory>>>(`${environment.apiBaseUrl}/product-status-histories`, { params });
   }
 
-  getProductStatusHistories(productId: number): Observable<ApiResponse<ProductStatusHistory[]>> {
-    return this.http.get<ApiResponse<PaginatedResult<ProductStatusHistory>>>(`${environment.apiBaseUrl}/product-status-histories`, {
-      params: new HttpParams()
-        .set('pageNumber', 1)
-        .set('pageSize', 100)
-        .set('productId', productId)
-    }).pipe(
-      map(response => ({
-        ...response,
-        data: response.data?.data
-          ? [...response.data.data].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          : []
-      }))
-    );
-  }
 }

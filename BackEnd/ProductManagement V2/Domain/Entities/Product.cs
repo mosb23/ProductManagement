@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
 using ProductManagement_V2.Domain.Enums;
-using ProductManagement_V2.Domain;
-
 
 namespace ProductManagement_V2.Domain.Entities
 {
@@ -34,7 +31,10 @@ namespace ProductManagement_V2.Domain.Entities
 
         }
 
-        public void UpdateStatus(ProductStatus newStatus)
+        public void UpdateStatus(
+            ProductStatus newStatus,
+            string? createdByUserId,
+            string createdByName)
         {
             if (Status == newStatus)
                 throw new Exception("Status is the same");
@@ -43,7 +43,12 @@ namespace ProductManagement_V2.Domain.Entities
 
             Status = newStatus;
 
-            StatusHistories.Add(new ProductStatusHistory(Id, oldStatus, newStatus));
+            StatusHistories.Add(new ProductStatusHistory(
+                Id,
+                oldStatus,
+                newStatus,
+                createdByUserId,
+                createdByName));
 
 
         }

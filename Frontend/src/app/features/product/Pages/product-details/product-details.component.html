@@ -155,7 +155,7 @@
           </button>
 
           @if (canViewStatusHistory()) {
-            <app-product-status-history [productId]="product.id" />
+            <app-product-status-history [statusHistory]="product.history || []" />
           }
         </aside>
       </section>

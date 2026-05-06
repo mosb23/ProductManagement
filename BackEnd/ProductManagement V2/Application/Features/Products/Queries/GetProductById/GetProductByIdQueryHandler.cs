@@ -35,42 +35,55 @@ namespace ProductManagement_V2.Application.Features.Products.Queries.GetProductB
                     Quantity = p.Quantity,
                     Status = p.Status,
 
-                    History = _context.ProductStatusHistories
-                        .Where(h => h.ProductId == p.Id)
-                        .OrderByDescending(h => h.CreatedAt)
-                        .GroupJoin(
-                            _context.UsersWithRoles,
-                            history => history.CreatedByUserId,
-                            user => user.Id,
-                            (history, users) => new { history, userById = users.FirstOrDefault() })
-                        .GroupJoin(
-                            _context.UsersWithRoles,
-                            x => x.history.CreatedBy,
-                            user => user.FullName,
-                            (x, users) => new
-                            {
-                                x.history,
-                                user = x.userById ?? users.FirstOrDefault()
-                            })
-                        .Select(h => new ProductStatusHistoryDto
-                        {
-                            Id = h.history.Id,
-                            ProductId = h.history.ProductId,
-                            ProductName = p.Name,
-
-                            OldStatus = h.history.OldStatus,
-                            NewStatus = h.history.NewStatus,
-
-                            CreatedAt = h.history.CreatedAt,
-                            CreatedBy = h.history.CreatedBy,
-                            CreatedByRole = h.user != null ? h.user.RoleName : null
-                        })
-                        .ToList()
+                    History = new List<ProductStatusHistoryDto>()
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (product is null)
                 return Result<ProductDetailsDto>.NotFound("Product not found");
+
+            var histories = await _context.ProductStatusHistories
+                .Where(h => h.ProductId == product.Id)
+                .OrderByDescending(h => h.CreatedAt)
+                .ToListAsync(cancellationToken);
+
+            var userIds = histories
+                .Where(h => h.CreatedByUserId != null)
+                .Select(h => h.CreatedByUserId)
+                .Distinct()
+                .ToList();
+
+            var createdByNames = histories
+                .Where(h => !string.IsNullOrWhiteSpace(h.CreatedBy))
+                .Select(h => h.CreatedBy)
+                .Distinct()
+                .ToList();
+
+            var users = await _context.UsersWithRoles
+                .Where(u =>
+                    userIds.Contains(u.Id) ||
+                    createdByNames.Contains(u.FullName))
+                .ToListAsync(cancellationToken);
+
+            product.History = histories.Select(h =>
+            {
+                var user = users.FirstOrDefault(u => u.Id == h.CreatedByUserId)
+                           ?? users.FirstOrDefault(u => u.FullName == h.CreatedBy);
+
+                return new ProductStatusHistoryDto
+                {
+                    Id = h.Id,
+                    ProductId = h.ProductId,
+                    ProductName = product.Name,
+
+                    OldStatus = h.OldStatus,
+                    NewStatus = h.NewStatus,
+
+                    CreatedAt = h.CreatedAt,
+                    CreatedBy = h.CreatedBy,
+                    CreatedByRole = user?.RoleName
+                };
+            }).ToList();
 
             return Result<ProductDetailsDto>.Success(product);
         }

@@ -1,5 +1,6 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ProductManagement_V2.Application.Common.Auth;
 using ProductManagement_V2.Application.Common.Results;
 using ProductManagement_V2.Infrastructuree;
 
@@ -9,10 +10,14 @@ namespace ProductManagement_V2.Application.Features.Products.Commands.ChangeProd
         : IRequestHandler<ChangeProductStatusCommand, Result>
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ChangeProductStatusCommandHandler(ApplicationDbContext context)
+        public ChangeProductStatusCommandHandler(
+            ApplicationDbContext context,
+            ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Result> Handle(
@@ -28,7 +33,10 @@ namespace ProductManagement_V2.Application.Features.Products.Commands.ChangeProd
 
             try
             {
-                product.UpdateStatus(request.Status);
+                product.UpdateStatus(
+                    request.Status,
+                    _currentUserService.UserId,
+                    _currentUserService.DisplayName);
             }
             catch (Exception ex)
             {
