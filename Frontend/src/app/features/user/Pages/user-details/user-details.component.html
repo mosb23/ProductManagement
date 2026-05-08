@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-slate-100 p-6">
+
+  <div class="mx-auto max-w-4xl">
+
+    <div class="mb-6 flex items-center justify-between">
+
+      <div>
+
+        <h1 class="text-3xl font-bold text-slate-900">
+          User Details
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+          View user information and assigned role.
+        </p>
+
+      </div>
+
+      <a
+        routerLink="/users"
+        class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700"
+      >
+        Back
+      </a>
+
+    </div>
+
+    @if (isLoading) {
+
+      <div class="flex items-center justify-center rounded-2xl bg-white p-12 shadow-sm">
+        <div class="h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900"></div>
+      </div>
+
+    }
+
+    @else if (!user) {
+
+      <div class="rounded-2xl bg-white p-12 text-center shadow-sm">
+
+        <h2 class="text-xl font-semibold text-slate-900">
+          User Not Found
+        </h2>
+
+      </div>
+
+    }
+
+    @else {
+
+      <div class="rounded-2xl bg-white p-8 shadow-sm">
+
+        <div class="mb-8 flex items-start justify-between">
+
+          <div>
+
+            <h2 class="text-2xl font-bold text-slate-900">
+              {{ user.fullName }}
+            </h2>
+
+            <p class="mt-2 text-slate-500">
+              {{ user.email }}
+            </p>
+
+          </div>
+
+          <span class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white">
+            {{ user.role }}
+          </span>
+
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
+
+          <div class="rounded-xl bg-slate-50 p-5">
+
+            <p class="text-sm text-slate-500">
+              Account Status
+            </p>
+
+            @if (user.isActive) {
+
+              <h3 class="mt-2 text-xl font-bold text-emerald-700">
+                Active
+              </h3>
+
+            }
+
+            @else {
+
+              <h3 class="mt-2 text-xl font-bold text-red-700">
+                Inactive
+              </h3>
+
+            }
+
+          </div>
+
+          <div class="rounded-xl bg-slate-50 p-5">
+
+            <p class="text-sm text-slate-500">
+              Created At
+            </p>
+
+            <h3 class="mt-2 text-xl font-bold text-slate-900">
+              {{ user.createdAt | date }}
+            </h3>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

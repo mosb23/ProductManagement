@@ -1,0 +1,165 @@
+<div class="min-h-screen bg-slate-100 p-6">
+
+  <div class="mx-auto max-w-4xl">
+
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-slate-900">
+        Add User
+      </h1>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Create a new user and assign one role.
+      </p>
+    </div>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      autocomplete="off"
+      class="rounded-2xl bg-white p-6 shadow-sm"
+    >
+
+      <div class="grid gap-5 md:grid-cols-2">
+
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            formControlName="fullName"
+            placeholder="Example: Mohamed Ahmed"
+            autocomplete="off"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Email
+          </label>
+
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Example: user@example.com"
+            autocomplete="new-email"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Password
+          </label>
+
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Example: StrongPassword@123"
+            autocomplete="new-password"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3"
+          />
+
+          <app-password-strength
+            [password]="password.value || ''"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">
+            Confirm Password
+          </label>
+
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Re-enter the password"
+            autocomplete="new-password"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3"
+          />
+
+          @if (form.hasError('passwordMismatch')) {
+            <p class="mt-1 text-sm text-red-600">
+              Passwords do not match.
+            </p>
+          }
+        </div>
+
+      </div>
+
+      <div class="mt-5">
+
+        <label class="mb-2 block text-sm font-medium text-slate-700">
+          Role
+        </label>
+
+        <select
+          formControlName="role"
+          class="w-full rounded-xl border border-slate-300 px-4 py-3"
+        >
+
+          <option value="">
+            Select role
+          </option>
+
+          @for (role of roles; track role.id) {
+            <option [value]="role.name">
+              {{ role.name }}
+            </option>
+          }
+
+        </select>
+
+      </div>
+
+      @if (claims.length > 0) {
+
+        <div class="mt-6 rounded-xl bg-slate-50 p-5">
+
+          <h3 class="text-lg font-semibold text-slate-900">
+            Role Permissions
+          </h3>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+
+            @for (claim of claims; track claim.value) {
+
+              <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
+                {{ claim.value | claimLabel }}
+              </span>
+
+            }
+
+          </div>
+
+        </div>
+
+      }
+
+      <div class="mt-8 flex justify-end gap-3">
+
+        <button
+          type="button"
+          routerLink="/users"
+          class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          [disabled]="form.invalid || isSaving"
+          class="rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {{ isSaving ? 'Creating...' : 'Create User' }}
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

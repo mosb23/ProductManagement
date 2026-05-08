@@ -2,76 +2,224 @@
   <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
     <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">Dashboard</p>
+        <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">
+          Dashboard
+        </p>
+
         <h1 class="mt-1 text-3xl font-bold text-slate-950">
           Welcome, {{ authService.currentUser()?.fullName }}
         </h1>
+
         <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-          Start with product review, create a product, or audit recent status changes.
+          Access the tools available to your assigned role.
         </p>
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <a
-          routerLink="/products"
-          class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-        >
-          View Products
-        </a>
-        <a
-          routerLink="/products/create"
-          class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-        >
-          Add Product
-        </a>
+        @if (canViewProducts()) {
+          <a
+            routerLink="/products"
+            class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+          >
+            View Products
+          </a>
+        }
+
+        @if (canCreateProducts()) {
+          <a
+            *appHasPermission="'products:create'"
+            routerLink="/products/create"
+            class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Add Product
+          </a>
+        }
       </div>
     </div>
   </section>
 
-  <section class="grid gap-4 md:grid-cols-3">
+  <section *appHasPermission="'statistics:view'" class="grid gap-4 md:grid-cols-3">
     <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Role</p>
+      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
+        Role
+      </p>
+
       <h2 class="mt-2 text-2xl font-bold text-slate-950">
         {{ authService.currentUser()?.role }}
       </h2>
     </div>
 
     <div class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Claims</p>
+      <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
+        Claims
+      </p>
+
       <h2 class="mt-2 text-2xl font-bold text-slate-950">
         {{ authService.currentUser()?.claims?.length || 0 }}
       </h2>
     </div>
 
     <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-      <p class="text-xs font-medium uppercase tracking-wide text-emerald-700">Session</p>
-      <h2 class="mt-2 text-2xl font-bold text-emerald-700">Active</h2>
+      <p class="text-xs font-medium uppercase tracking-wide text-emerald-700">
+        Session
+      </p>
+
+      <h2 class="mt-2 text-2xl font-bold text-emerald-700">
+        Active
+      </h2>
     </div>
   </section>
 
-  <section class="grid gap-4 lg:grid-cols-3">
-    <a routerLink="/products" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
-      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">P</div>
-      <p class="mt-4 text-sm font-semibold text-slate-950">Product Directory</p>
-      <p class="mt-2 text-sm leading-6 text-slate-500">
-        Search, inspect, and manage existing product records.
-      </p>
-    </a>
+  @if (canViewProductSection()) {
+    <section>
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-slate-950">
+            Product Management
+          </h2>
 
-    <a routerLink="/products/create" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
-      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">+</div>
-      <p class="mt-4 text-sm font-semibold text-slate-950">Create Product</p>
-      <p class="mt-2 text-sm leading-6 text-slate-500">
-        Add a new item with price, quantity, and product details.
-      </p>
-    </a>
+          <p class="mt-1 text-sm text-slate-500">
+            Create, review, and audit products and status changes.
+          </p>
+        </div>
+      </div>
 
-    <a routerLink="/products/status-history" class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow">
-      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">A</div>
-      <p class="mt-4 text-sm font-semibold text-slate-950">Status Audit</p>
-      <p class="mt-2 text-sm leading-6 text-slate-500">
-        Review status transitions with date, product, and changed-by filters.
-      </p>
-    </a>
-  </section>
+      <div class="grid gap-4 lg:grid-cols-3">
+        @if (canViewProducts()) {
+          <a
+            routerLink="/products"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">
+              P
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Product Directory
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Search, inspect, and manage existing product records.
+            </p>
+          </a>
+        }
+
+        @if (canCreateProducts()) {
+          <a
+            *appHasPermission="'products:create'"
+            routerLink="/products/create"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">
+              +
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Create Product
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Add a new item with price, quantity, and product details.
+            </p>
+          </a>
+        }
+
+        @if (canViewStatusHistory()) {
+          <a
+            routerLink="/products/status-history"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">
+              A
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Status Audit
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Review status transitions with date, product, and changed-by filters.
+            </p>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  @if (canViewUserSection()) {
+    <section>
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-slate-950">
+            User & Role Management
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Manage users, assigned roles, and system permissions.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        @if (canViewUsers()) {
+          <a
+            routerLink="/users"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">
+              U
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Users
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Browse users, create accounts, and manage assigned roles.
+            </p>
+          </a>
+        }
+
+        @if (canCreateUsers()) {
+          <a
+            *appHasPermission="'users:create'"
+            routerLink="/users/create"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">
+              +
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Create User
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Create new system users and assign exactly one role.
+            </p>
+          </a>
+        }
+
+        @if (canViewRoles()) {
+          <a
+            *appHasPermission="'roles:view'"
+            routerLink="/users/roles"
+            class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:shadow"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">
+              R
+            </div>
+
+            <p class="mt-4 text-sm font-semibold text-slate-950">
+              Roles & Permissions
+            </p>
+
+            <p class="mt-2 text-sm leading-6 text-slate-500">
+              Review role claims and inspect permission mappings.
+            </p>
+          </a>
+        }
+      </div>
+    </section>
+  }
 </div>

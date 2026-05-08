@@ -17,31 +17,21 @@
       <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-sm font-bold text-white">
         PM
       </div>
+
       <div class="min-w-0">
         <p class="truncate text-sm font-bold text-slate-950">ProductManagement</p>
         <p class="text-xs font-medium text-slate-500">Admin Workspace</p>
       </div>
     </div>
 
-    <nav class="flex-1 space-y-1 px-3 py-4">
-      @for (item of visibleNavigationItems; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="border-slate-950 bg-slate-950 text-white"
-          [routerLinkActiveOptions]="{ exact: item.exact }"
-          (click)="closeSidebar()"
-          class="flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-        >
-          {{ item.label }}
-        </a>
-      }
-    </nav>
+    <app-nav-menu (navigate)="closeSidebar()" />
 
     <div class="border-t border-slate-200 p-4">
       <div class="rounded-lg bg-slate-50 p-3">
         <p class="truncate text-sm font-semibold text-slate-950">
           {{ authService.currentUser()?.fullName }}
         </p>
+
         <p class="mt-1 truncate text-xs text-slate-500">
           {{ authService.currentUser()?.role }}
         </p>
@@ -72,15 +62,23 @@
 
           <div class="min-w-0">
             <p class="truncate text-base font-bold text-slate-950">{{ pageTitle }}</p>
-            <p class="hidden text-xs text-slate-500 sm:block">Manage products, inventory, and status audit trails.</p>
+            <p class="hidden text-xs text-slate-500 sm:block">
+              Manage products, users, roles, and permissions.
+            </p>
           </div>
         </div>
 
         <div class="hidden items-center gap-3 sm:flex">
           <div class="text-right">
-            <p class="text-sm font-semibold text-slate-950">{{ authService.currentUser()?.fullName }}</p>
-            <p class="text-xs text-slate-500">{{ authService.currentUser()?.email }}</p>
+            <p class="text-sm font-semibold text-slate-950">
+              {{ authService.currentUser()?.fullName }}
+            </p>
+
+            <p class="text-xs text-slate-500">
+              {{ authService.currentUser()?.email }}
+            </p>
           </div>
+
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-600">
             {{ authService.currentUser()?.fullName?.charAt(0) || 'U' }}
           </div>

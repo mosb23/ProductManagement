@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
   {
@@ -28,13 +29,28 @@ export const routes: Routes = [
         path: 'products',
         loadChildren: () =>
           import('./features/product/product.routes')
-            .then(r => r.productRoutes)
+            .then(r => r.PRODUCT_ROUTES)
+      },
+      {
+        path: 'users',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./features/user/user.routes')
+            .then(r => r.USER_ROUTES)
       },
       {
         path: 'forbidden',
         loadComponent: () =>
           import('./shared/pages/forbidden/forbidden.component')
             .then(c => c.ForbiddenComponent)
+      },
+      {
+        path: 'statistics',
+        canActivate: [permissionGuard],
+        data: { permission: 'statistics:view' },
+        loadComponent: () =>
+          import('./features/statistics/pages/statistics.component')
+            .then(c => c.StatisticsComponent)
       },
       {
         path: '',

@@ -20,6 +20,7 @@
         }
 
         <a
+          *appHasPermission="'products:create'"
           routerLink="/products/create"
           class="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
@@ -119,6 +120,7 @@
           Try a different search term or create a product to start filling your inventory.
         </p>
         <a
+          *appHasPermission="'products:create'"
           routerLink="/products/create"
           class="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >

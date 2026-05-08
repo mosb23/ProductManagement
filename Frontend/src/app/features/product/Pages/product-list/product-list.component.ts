@@ -9,11 +9,12 @@ import { ProductListItem } from '../../Core/models/product-list-item.model';
 import { ProductFilters, ProductService } from '../../Core/services/product.service';
 import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
 import { AuthService } from '../../../../core/services/auth/auth.service';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 
 @Component({
   selector: 'app-product-list',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, PaginationComponent, ProductStatusPipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PaginationComponent, ProductStatusPipe, HasPermissionDirective],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })

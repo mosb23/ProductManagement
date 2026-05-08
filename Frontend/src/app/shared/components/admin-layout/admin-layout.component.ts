@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { NavMenuComponent } from '../../../shared/components/nav-menu/nav-menu.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, NavMenuComponent],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss'
 })
@@ -17,43 +18,23 @@ export class AdminLayoutComponent {
 
   isSidebarOpen = false;
 
-  readonly navigationItems = [
-    { label: 'Dashboard', route: '/dashboard', exact: true },
-    { label: 'Products', route: '/products', exact: true },
-    { label: 'Add Product', route: '/products/create', exact: true },
-    { label: 'Status History', route: '/products/status-history', exact: true, claim: 'product-status-histories:view' }
-  ];
-
-  get visibleNavigationItems() {
-    return this.navigationItems.filter(item => !item.claim || this.authService.hasClaim(item.claim));
-  }
 
   get pageTitle(): string {
     const url = this.router.url.split('?')[0];
 
-    if (url === '/dashboard') {
-      return 'Dashboard';
-    }
+    if (url === '/dashboard') return 'Dashboard';
+    if (url === '/products') return 'Products';
+    if (url === '/products/create') return 'Add Product';
+    if (url === '/products/status-history') return 'Status History';
+    if (url.startsWith('/products/')) return 'Product Details';
 
-    if (url === '/products') {
-      return 'Products';
-    }
+    if (url === '/users') return 'Users';
+    if (url === '/users/create') return 'Add User';
+    if (url === '/users/roles') return 'Roles';
+    if (url === '/users/permissions') return 'Permissions';
+    if (url.startsWith('/users/')) return 'User Details';
 
-    if (url === '/products/create') {
-      return 'Add Product';
-    }
-
-    if (url === '/products/status-history') {
-      return 'Status History';
-    }
-
-    if (url.startsWith('/products/')) {
-      return 'Product Details';
-    }
-
-    if (url === '/forbidden') {
-      return 'Access Denied';
-    }
+    if (url === '/forbidden') return 'Access Denied';
 
     return 'Product Management';
   }

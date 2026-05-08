@@ -13,6 +13,7 @@ import { productStatusOptions } from '../../Core/utils/product-status.util';
 import { ProductStatusPipe } from '../../Core/pipes/product-status.pipe';
 import { ProductStatusHistoryComponent } from '../product-status-history/product-status-history.component';
 import { AuthService } from '../../../../core/services/auth/auth.service';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 
 
@@ -20,7 +21,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ProductStatusPipe, ProductStatusHistoryComponent],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ProductStatusPipe, ProductStatusHistoryComponent, HasPermissionDirective],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.scss'
 })

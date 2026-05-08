@@ -1,24 +1,46 @@
 import { Routes } from '@angular/router';
 
-import { authGuard } from '../../core/guards/auth.guard';
-import { guestGuard } from '../../core/guards/guest.guard';
+import { permissionGuard } from '../../core/guards/permission.guard';
 
 export const USER_ROUTES: Routes = [
   {
-    path: 'login',
-    canActivate: [guestGuard],
-    loadComponent: () =>
-      import('./Pages/login/login.component').then(c => c.LoginComponent)
-  },
-  {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./Pages/dashboard/dashboard.component').then(c => c.DashboardComponent)
-  },
-  {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard'
+    canActivate: [permissionGuard],
+    data: { permission: 'users:view' },
+    loadComponent: () =>
+      import('./Pages/users-list/users-list.component')
+        .then(c => c.UsersListComponent)
+  },
+  {
+    path: 'create',
+    canActivate: [permissionGuard],
+    data: { permission: 'users:create' },
+    loadComponent: () =>
+      import('./Pages/add-user/add-user.component')
+        .then(c => c.AddUserComponent)
+  },
+  {
+    path: 'roles',
+    canActivate: [permissionGuard],
+    data: { permission: 'roles:view' },
+    loadComponent: () =>
+      import('./Pages/roles-list/roles-list.component')
+        .then(c => c.RolesListComponent)
+  },
+  {
+    path: 'permissions',
+    canActivate: [permissionGuard],
+    data: { permission: 'roles:view' },
+    loadComponent: () =>
+      import('./Pages/permissions-list/permissions-list.component')
+        .then(c => c.PermissionsListComponent)
+  },
+  {
+    path: ':id',
+    canActivate: [permissionGuard],
+    data: { permission: 'users:view' },
+    loadComponent: () =>
+      import('./Pages/user-details/user-details.component')
+        .then(c => c.UserDetailsComponent)
   }
 ];

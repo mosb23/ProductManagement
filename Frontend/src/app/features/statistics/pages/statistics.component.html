@@ -1,0 +1,117 @@
+<div class="mx-auto max-w-7xl space-y-6">
+  <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">
+          Statistics
+        </p>
+
+        <h1 class="mt-1 text-3xl font-bold text-slate-950">
+          System Overview
+        </h1>
+
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          Review product, user, and status-change metrics in one admin view.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="loadStatistics()"
+        [disabled]="isLoading"
+        class="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+      </button>
+    </div>
+  </section>
+
+  @if (isLoading) {
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="h-4 w-28 animate-pulse rounded bg-slate-200"></div>
+          <div class="mt-4 h-9 w-20 animate-pulse rounded bg-slate-200"></div>
+          <div class="mt-4 h-4 w-full animate-pulse rounded bg-slate-100"></div>
+          <div class="mt-2 h-4 w-2/3 animate-pulse rounded bg-slate-100"></div>
+        </div>
+      }
+    </section>
+  } @else if (errorMessage) {
+    <section class="rounded-xl border border-red-200 bg-red-50 p-6 shadow-sm">
+      <h2 class="text-lg font-bold text-red-700">
+        Could not load statistics
+      </h2>
+
+      <p class="mt-2 text-sm text-red-600">
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="button"
+        (click)="loadStatistics()"
+        class="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+      >
+        Try Again
+      </button>
+    </section>
+  } @else if (statistics) {
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <app-stats-card
+        title="Total Products"
+        [value]="statistics.products.total"
+        description="All products registered in the system."
+        tone="slate"
+      />
+
+      <app-stats-card
+        title="Available Products"
+        [value]="statistics.products.available"
+        description="Products currently available."
+        tone="green"
+      />
+
+      <app-stats-card
+        title="Out of Stock"
+        [value]="statistics.products.outOfStock"
+        description="Products with no available quantity."
+        tone="yellow"
+      />
+
+      <app-stats-card
+        title="Discontinued"
+        [value]="statistics.products.discontinued"
+        description="Products no longer active in inventory."
+        tone="red"
+      />
+
+      <app-stats-card
+        title="Status Changes"
+        [value]="statistics.statusChanges.total"
+        description="Total product status transitions recorded."
+        tone="indigo"
+      />
+
+      <app-stats-card
+        title="Total Users"
+        [value]="statistics.users.total"
+        description="Users registered in the admin system."
+        tone="slate"
+      />
+
+      <app-stats-card
+        title="Active Users"
+        [value]="statistics.users.active"
+        description="Users currently active."
+        tone="green"
+      />
+
+      <app-stats-card
+        title="Inactive Users"
+        [value]="statistics.users.inactive"
+        description="Users currently inactive."
+        tone="red"
+      />
+    </section>
+  }
+</div>

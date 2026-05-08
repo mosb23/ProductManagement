@@ -1,0 +1,59 @@
+<nav class="flex-1 overflow-y-auto px-3 py-4">
+  <div class="space-y-1">
+    @for (item of mainNavigationItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="border-slate-950 bg-slate-950 text-white"
+        [routerLinkActiveOptions]="{ exact: item.exact }"
+        (click)="onNavigate()"
+        class="flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </div>
+
+  @if (productNavigationItems.length > 0) {
+    <div class="mt-6">
+      <p class="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+        Products
+      </p>
+
+      <div class="space-y-1">
+        @for (item of productNavigationItems; track item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="border-slate-950 bg-slate-950 text-white"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            (click)="onNavigate()"
+            class="flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </div>
+    </div>
+  }
+
+  @if (userNavigationItems.length > 0) {
+    <div class="mt-6">
+      <p class="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+        Users & Roles
+      </p>
+
+      <div class="space-y-1">
+        @for (item of userNavigationItems; track item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="border-slate-950 bg-slate-950 text-white"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            (click)="onNavigate()"
+            class="flex min-h-11 items-center rounded-lg border border-transparent px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </div>
+    </div>
+  }
+</nav>
