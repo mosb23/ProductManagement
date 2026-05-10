@@ -11,3 +11,4 @@ import { AlertComponent } from './shared/components/alert/alert.component';
 export class App {
   protected readonly title = signal('Frontend');
 }
+  
