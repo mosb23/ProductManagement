@@ -30,7 +30,9 @@ namespace ProductManagement_V2.Application.Common.Behaviors
             var errors = validationResults
                 .SelectMany(r => r.Errors)
                 .Where(e => e is not null)
-                .Select(e => e.ErrorMessage)
+                .Select(e => string.IsNullOrWhiteSpace(e.PropertyName)
+                    ? e.ErrorMessage
+                    : $"{e.PropertyName}: {e.ErrorMessage}")
                 .Distinct()
                 .ToList();
 

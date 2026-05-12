@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProductManagement_V2.Application.Common.Auth;
@@ -14,10 +15,33 @@ using ProductManagement_V2.Infrastructuree.Security;
 using ProductManagement_V2.Infrastructuree.Seeders;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using ProductManagement_V2.Application.Common;
+using ProductManagement_V2.Infrastructuree.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(entry => entry.Value?.Errors.Count > 0)
+            .SelectMany(entry => entry.Value!.Errors.Select(error =>
+                string.IsNullOrWhiteSpace(entry.Key)
+                    ? error.ErrorMessage
+                    : $"{entry.Key}: {error.ErrorMessage}"))
+            .Distinct()
+            .ToList();
+
+        var response = ApiResponse<object>.FailResponse(
+            errors.FirstOrDefault() ?? "Validation error",
+            StatusCodes.Status400BadRequest,
+            errors);
+
+        return new OkObjectResult(response);
+    };
+});
 builder.Services.AddEndpointsApiExplorer();
 
 
@@ -101,6 +125,44 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = async context =>
+        {
+            context.HandleResponse();
+
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+
+            var response = ApiResponse<object>.FailResponse(
+                "Your session has expired. Please login again.",
+                StatusCodes.Status401Unauthorized);
+
+            await context.Response.WriteAsJsonAsync(response);
+        },
+        OnForbidden = async context =>
+        {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/json";
+
+            var response = ApiResponse<object>.FailResponse(
+                "Access denied. You do not have permission.",
+                StatusCodes.Status403Forbidden);
+
+            await context.Response.WriteAsJsonAsync(response);
+        }
+    };
 });
 
 builder.Services.AddMediatR(cfg =>
@@ -172,8 +234,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Must wrap the pipeline before endpoint execution so unhandled exceptions use the API result shape.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseCors("FrontendCors");
+
+// Binds ApiResponse.StatusCode from result responses to the actual HTTP response code.
+app.UseMiddleware<ResultStatusCodeMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

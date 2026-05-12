@@ -54,6 +54,10 @@
           @if (name.touched && name.hasError('maxlength')) {
             <p class="mt-2 text-sm font-medium text-red-600">Name cannot exceed 200 characters.</p>
           }
+
+          @for (error of backendErrors('name'); track error) {
+            <p class="mt-2 text-sm font-medium text-red-600">{{ error }}</p>
+          }
         </div>
 
         <div>
@@ -70,6 +74,10 @@
 
           @if (description.touched && description.hasError('maxlength')) {
             <p class="mt-2 text-sm font-medium text-red-600">Description cannot exceed 1000 characters.</p>
+          }
+
+          @for (error of backendErrors('description'); track error) {
+            <p class="mt-2 text-sm font-medium text-red-600">{{ error }}</p>
           }
         </div>
 
@@ -95,6 +103,10 @@
             @if (price.touched && price.hasError('min')) {
               <p class="mt-2 text-sm font-medium text-red-600">Price must be more than 0.</p>
             }
+
+            @for (error of backendErrors('price'); track error) {
+              <p class="mt-2 text-sm font-medium text-red-600">{{ error }}</p>
+            }
           </div>
 
           <div>
@@ -117,6 +129,10 @@
 
             @if (quantity.touched && quantity.hasError('min')) {
               <p class="mt-2 text-sm font-medium text-red-600">Quantity cannot be negative.</p>
+            }
+
+            @for (error of backendErrors('quantity'); track error) {
+              <p class="mt-2 text-sm font-medium text-red-600">{{ error }}</p>
             }
           </div>
         </div>

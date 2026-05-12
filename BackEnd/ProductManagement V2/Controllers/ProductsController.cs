@@ -28,7 +28,7 @@ namespace ProductManagement_V2.Controllers
         public async Task<ActionResult<ApiResponse<int>>> Create(ProductCreateContract request)
         {
             var result = await _mediator.Send(new CreateProductCommand(request));
-            return FromResult(result, "Product Created");
+            return FromResult(result, "Product Created", StatusCodes.Status201Created);
         }
 
         [HttpGet]

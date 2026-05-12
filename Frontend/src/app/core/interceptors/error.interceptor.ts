@@ -18,15 +18,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (apiError.status === 401) {
         authService.clearSession();
-        alertService.error(apiError.message);
         router.navigate(['/login']);
-      } else if (apiError.status === 403) {
         alertService.error(apiError.message);
+      } else if (apiError.status === 403) {
         router.navigate(['/forbidden']);
+        alertService.error(apiError.message);
       } else if (apiError.status === 500 || apiError.status === 0) {
+        alertService.error(apiError.message);
       }
-      
-      alertService.error(apiError.message);
+
       return throwError(() => apiError);
     })
   );

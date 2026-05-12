@@ -25,7 +25,7 @@ namespace ProductManagement_V2.Controllers
         public async Task<ActionResult<ApiResponse<UserResponse>>> Create(CreateUserRequest request)
         {
             var result = await _mediator.Send(new CreateUserCommand(request));
-            return FromResult(result, "User created successfully");
+            return FromResult(result, "User created successfully", StatusCodes.Status201Created);
         }
 
         [HttpGet]

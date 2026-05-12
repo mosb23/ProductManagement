@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ApiError } from '../../../../core/models/api-error.model';
 import { AlertService } from '../../../../core/services/alert.service';
+import { applyApiFieldErrors, getBackendErrors } from '../../../../core/utils/form-error.util';
 import { ProductService } from '../../Core/services/product.service';
 import { Location } from '@angular/common';
 
@@ -60,6 +61,7 @@ export class AddProductComponent {
         this.router.navigate(['/products']);
       },
       error: (error: ApiError) => {
+        applyApiFieldErrors(this.productForm, error);
         this.alertService.error(error.message || 'Failed to create product.');
       }
     });
@@ -83,5 +85,9 @@ export class AddProductComponent {
 
   get quantity() {
     return this.productForm.controls.quantity;
+  }
+
+  backendErrors(controlName: string): string[] {
+    return getBackendErrors(this.productForm, controlName);
   }
 }

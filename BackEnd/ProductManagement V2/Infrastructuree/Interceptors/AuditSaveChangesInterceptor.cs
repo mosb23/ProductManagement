@@ -52,7 +52,10 @@ namespace ProductManagement_V2.Infrastructuree.Interceptors
                     if (entry.State == EntityState.Deleted && entry.Entity is SoftDeleteEntity softDelete)
                     {
                         entry.State = EntityState.Modified;
-                        softDelete.MarkAsDeleted(now);
+                        softDelete.MarkAsDeleted(
+                            now,
+                            _currentUserService.DisplayName,
+                            _currentUserService.UserId);
                     }
                 }
             }

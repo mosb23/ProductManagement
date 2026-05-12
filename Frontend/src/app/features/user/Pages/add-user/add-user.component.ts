@@ -8,7 +8,9 @@ import {
 
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { ApiError } from '../../../../core/models/api-error.model';
 import { AlertService } from '../../../../core/services/alert.service';
+import { applyApiFieldErrors, getBackendErrors } from '../../../../core/utils/form-error.util';
 import { passwordMatchValidator } from '../../../../core/validators/password-match.validator';
 import { passwordStrengthValidator } from '../../../../core/validators/password-strength.validator';
 import { PasswordStrengthComponent } from '../../../../shared/components/password-strength/password-strength.component';
@@ -154,11 +156,19 @@ export class AddUserComponent implements OnInit {
           this.alertService.success('User created successfully.');
 
           this.router.navigate(['/users']);
+        },
+        error: (error: ApiError) => {
+          applyApiFieldErrors(this.form, error);
+          this.alertService.error(error.message || 'Failed to create user.');
         }
       });
   }
 
   get password() {
     return this.form.controls.password;
+  }
+
+  backendErrors(controlName: string): string[] {
+    return getBackendErrors(this.form, controlName);
   }
 }
