@@ -217,22 +217,22 @@ builder.Services.AddCors(options =>
     options.AddPolicy("FrontendCors", policy =>
     {
         policy
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://20.20.1.158:8080")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
-
-var app = builder.Build();
-
+    
 
 
-if (app.Environment.IsDevelopment())
-{
+    var app = builder.Build();
+
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
+    app.UseDeveloperExceptionPage();
 
 // Must wrap the pipeline before endpoint execution so unhandled exceptions use the API result shape.
 app.UseMiddleware<ExceptionHandlingMiddleware>();
